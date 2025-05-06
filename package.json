@@ -1,0 +1,27 @@
+{
+  "name": "messenger-room",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@next-auth/mongodb-adapter": "^1.1.3",
+    "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.2",
+    "mongodb": "^5.9.2",
+    "mongoose": "^8.14.1",
+    "next": "15.3.1",
+    "next-auth": "^4.24.11",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "socket.io-client": "^4.8.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "tailwindcss": "^4"
+  }
+}
