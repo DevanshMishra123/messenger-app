@@ -18,11 +18,12 @@ export default function LoginPage() {
       email,
       password,
     });
-    if (res.error) {
-      setError(res.error);
+    if (res?.ok) {
+      setTimeout(() => {
+        router.push('/');
+      }, 100);
     } else {
-      console.log(res);
-      router.push('/');
+      setError(res?.error || 'Login failed');
     }
   };
 
