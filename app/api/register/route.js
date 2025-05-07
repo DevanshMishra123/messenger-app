@@ -28,6 +28,7 @@ export async function POST(req) {
       name: username,
       email,
       password: hashedPassword,
+      messages: [],
     });
 
     return new Response(JSON.stringify({ message: 'User created' }), {

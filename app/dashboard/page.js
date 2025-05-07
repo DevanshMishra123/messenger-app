@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { useSession, signOut } from "next-auth/react";
-import { LogOut } from 'lucide-react';
+import { LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -13,7 +13,8 @@ export default function ChatClient() {
   const { data: session, status } = useSession();
   const userName = session?.user?.name;
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState(session?.user?.messages || []);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -58,9 +59,32 @@ export default function ChatClient() {
 
   return (
     <div className="bg-[url('/chat-bg.png')] bg-cover bg-center h-screen w-screen flex flex-col items-center justify-center">
+      {error && (
+        <div className="absolute top-6 right-6 bg-red-500 text-white px-4 py-2 rounded shadow-md animate-pulse z-50">
+          {error}
+        </div>
+      )}
       <div className="absolute top-4 right-4">
         <button
-          onClick={() => signOut({ callbackUrl: "/login" })}
+          onClick={async () => {
+            try {
+              await fetch("/api/messages", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  email: session?.user?.email,
+                  messages: messages,
+                }),
+              });
+
+              signOut({ callbackUrl: "/login" });
+            } catch (error) {
+              console.error("Failed to save messages:", error);
+              setError("Failed to save messages before sign out");
+            }
+          }}
           className="bg-emerald-400 hover:bg-indigo-500 text-white p-2 rounded transition-colors duration-200"
           title="Sign Out"
         >

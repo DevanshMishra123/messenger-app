@@ -28,7 +28,7 @@ export const authOptions = {
           throw new Error("Incorrect password");
         }
 
-        return { id: user._id.toString(), name: user.name, email: user.email };
+        return { id: user._id.toString(), name: user.name, email: user.email, messages: user.messages || [] };
       },
     }),
   ],
@@ -54,12 +54,15 @@ export const authOptions = {
         token.id = user.id;
         token.email = user.email;
         token.name = user.name;
+        token.messages = user.messages || [];
       }
       return token;
     },
     async session({ session, token }) {
       session.user.id = token.id;
       session.user.name = token.name;
+      session.user.email = token.email;
+      session.user.messages = token.messages || [];
       return session;
     },
   },
