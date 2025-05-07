@@ -10,15 +10,20 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); 
+    setError('');
+
     const res = await signIn('credentials', {
       redirect: false,
       email,
       password,
     });
-    console.log(res)
+    console.log("response is",res)
+    setLoading(false);
     if (res?.ok) {
       setTimeout(() => {
         router.push('/');
@@ -33,7 +38,56 @@ export default function LoginPage() {
       className="min-h-screen bg-cover bg-center flex items-center justify-center px-4"
       style={{
         backgroundImage:
-          'url("https://images.unsplash.com/photo-1498050108023-c5249f4df085")',
+          'url("https://images.unsplash.com/photo-1508780709619-79562169bc64?auto=format&fit=crop&w=1950&q=80")',
+      }}
+    >
+      <div className="bg-white/10 backdrop-blur-md border border-white/20 p-8 rounded-xl shadow-2xl w-full max-w-md text-white">
+        <h1 className="text-3xl font-bold text-center mb-6">Sign In</h1>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-white/80">Email</label>
+            <input
+              type="email"
+              className="mt-1 w-full px-4 py-2 bg-white/10 text-white border border-white/30 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-white/80">Password</label>
+            <input
+              type="password"
+              className="mt-1 w-full px-4 py-2 bg-white/10 text-white border border-white/30 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-md font-semibold transition-all transform hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? 'Signing in...' : 'Login'}
+          </button>
+        </form>
+        <p className="mt-4 text-center text-sm text-white/70">
+          Haven&apos;t created an account?{' '}
+          <Link href="/register" className="text-indigo-400 hover:underline">
+            Sign Up
+          </Link>
+        </p>
+      </div>
+    </div>   
+  );
+}
+/*<div
+      className="min-h-screen bg-cover bg-center flex items-center justify-center px-4"
+      style={{
+        backgroundImage:
+          'url("https://images.unsplash.com/photo-1508780709619-79562169bc64?auto=format&fit=crop&w=1950&q=80")',
       }}
     >
       <div className="bg-white bg-opacity-90 p-8 rounded-xl shadow-xl w-full max-w-md">
@@ -75,5 +129,4 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
-  );
-}
+  */

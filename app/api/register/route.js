@@ -3,9 +3,9 @@ import { hash } from 'bcryptjs';
 
 export async function POST(req) {
   try {
-    const { email, password } = await req.json();
+    const { email, password, username } = await req.json();
 
-    if (!email || !password) {
+    if (!email || !password || !username) {
       return new Response(JSON.stringify({ message: 'Email and password are required' }), {
         status: 400,
       });
@@ -25,6 +25,7 @@ export async function POST(req) {
     const hashedPassword = await hash(password, 12);
 
     await db.collection('users').insertOne({
+      name: username,
       email,
       password: hashedPassword,
     });

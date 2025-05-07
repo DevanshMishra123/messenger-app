@@ -3,11 +3,15 @@
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { useSession, signOut } from "next-auth/react";
+import { LogOut } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 let socket;
 
 export default function ChatClient() {
   const { data: session, status } = useSession();
+  const userName = session?.user?.name;
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
 
@@ -16,7 +20,10 @@ export default function ChatClient() {
       socket = io("https://chat-backend-g9v3.onrender.com");
 
       const handleReceiveMessage = (data) => {
-        setMessages((prev) => [...prev, { message: data, type: 1 }]);
+        setMessages((prev) => [
+          ...prev,
+          { message: data.message, name: data.name, type: 1 },
+        ]);
       };
 
       socket.on("receive_message", handleReceiveMessage);
@@ -29,8 +36,11 @@ export default function ChatClient() {
 
   const sendMessage = () => {
     if (!message || status !== "authenticated") return;
-    socket.emit("send_message", message);
-    setMessages((prev) => [...prev, { message: message, type: 0 }]);
+    socket.emit("send_message", { message, name: userName });
+    setMessages((prev) => [
+      ...prev,
+      { message: message, type: 0, name: userName },
+    ]);
     setMessage("");
   };
 
@@ -39,7 +49,11 @@ export default function ChatClient() {
   }
 
   if (status === "unauthenticated") {
-    return <p className="text-white text-center mt-10">You must be logged in to access the chat.</p>;
+    return (
+      <p className="text-white text-center mt-10">
+        You must be logged in to access the chat.
+      </p>
+    );
   }
 
   return (
@@ -47,9 +61,10 @@ export default function ChatClient() {
       <div className="absolute top-4 right-4">
         <button
           onClick={() => signOut({ callbackUrl: "/login" })}
-          className="bg-red-500 text-white px-4 py-2 rounded"
+          className="bg-emerald-400 hover:bg-indigo-500 text-white p-2 rounded transition-colors duration-200"
+          title="Sign Out"
         >
-          Sign Out
+          <LogOut size={20} />
         </button>
       </div>
 
@@ -67,13 +82,16 @@ export default function ChatClient() {
                   msg.type === 0 ? "bg-blue-500" : "bg-gray-500"
                 }`}
               >
+                {msg.name && msg.type === 1 && (
+                  <p className="text-[11px] text-blue-200 mb-1">~{msg.name}</p>
+                )}
                 <p>{msg.message}</p>
               </div>
             </div>
           ))}
         </div>
         <div className="flex items-center gap-3 p-4 border-t border-white/10 bg-white/5 backdrop-blur-sm">
-          <input
+          <Input
             id="name"
             type="text"
             value={message}
@@ -81,12 +99,12 @@ export default function ChatClient() {
             placeholder="Enter your message"
             className="flex-1 text-white bg-white/10 backdrop-blur-md placeholder-white/50 p-2 rounded"
           />
-          <button
+          <Button
             onClick={sendMessage}
             className="bg-blue-600 text-white px-4 py-2 rounded"
           >
             Send
-          </button>
+          </Button>
         </div>
       </div>
     </div>
