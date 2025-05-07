@@ -18,6 +18,7 @@ export default function LoginPage() {
       email,
       password,
     });
+    console.log(res)
     if (res?.ok) {
       setTimeout(() => {
         router.push('/');
