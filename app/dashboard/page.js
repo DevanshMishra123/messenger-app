@@ -36,6 +36,12 @@ export default function ChatClient() {
     }
   }, [status]);
 
+  useEffect(() => {
+    if (session?.user?.messages?.length) {
+      setMessages(session.user.messages);
+    }
+  }, [session]);
+
   const sendMessage = () => {
     if (!message || status !== "authenticated") return;
     socket.emit("send_message", { message, name: userName });
