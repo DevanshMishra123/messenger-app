@@ -10,7 +10,8 @@ import { Input } from "@/components/ui/input";
 let socket;
 
 export default function ChatClient() {
-  const { data: session, status } = useSession();
+  const { data: session, status } = useSession()
+  console.log(session?.user?.messages);
   const userName = session?.user?.name;
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState(session?.user?.messages || []);
