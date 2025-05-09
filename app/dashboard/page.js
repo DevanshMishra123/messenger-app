@@ -93,22 +93,12 @@ export default function ChatClient() {
   }
 
   return (
-    <div className="bg-[url('/chat-bg.png')] bg-cover bg-center h-screen w-screen flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center pt-8">
       {error && (
         <div className="absolute top-6 right-6 bg-red-500 text-white px-4 py-2 rounded shadow-md animate-pulse z-50">
           {error}
         </div>
       )}
-      <div className="absolute top-4 right-4">
-        <button
-          onClick={async () => signOut({ callbackUrl: "/login" })}
-          className="bg-emerald-400 hover:bg-indigo-500 text-white p-2 rounded transition-colors duration-200"
-          title="Sign Out"
-        >
-          <LogOut size={20} />
-        </button>
-      </div>
-
       <div className="w-[70vw] h-[80vh] bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-lg flex flex-col overflow-hidden">
         <div className="flex-1 overflow-y-auto p-4 space-y-2">
           {messages.map((msg, idx) => (
