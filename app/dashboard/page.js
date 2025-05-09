@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 let socket;
 
 export default function ChatClient() {
-  const { data: session, status } = useSession()
+  const { data: session, status } = useSession();
   console.log(session?.user?.messages);
   const userName = session?.user?.name;
   const [message, setMessage] = useState("");
@@ -42,7 +42,7 @@ export default function ChatClient() {
     }
   }, [session]);
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     if (!message || status !== "authenticated") return;
     socket.emit("send_message", { message, name: userName });
     setMessages((prev) => [
@@ -50,6 +50,21 @@ export default function ChatClient() {
       { message: message, type: 0, name: userName },
     ]);
     setMessage("");
+    try {
+      await fetch("/api/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: session?.user?.email,
+          messages: messages,
+        }),
+      });
+    } catch (error) {
+      console.error("Failed to save messages:", error);
+      setError("Failed to save messages");
+    }
   };
 
   if (status === "loading") {
@@ -73,25 +88,7 @@ export default function ChatClient() {
       )}
       <div className="absolute top-4 right-4">
         <button
-          onClick={async () => {
-            try {
-              await fetch("/api/messages", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  email: session?.user?.email,
-                  messages: messages,
-                }),
-              });
-
-              signOut({ callbackUrl: "/login" });
-            } catch (error) {
-              console.error("Failed to save messages:", error);
-              setError("Failed to save messages before sign out");
-            }
-          }}
+          onClick={async () => signOut({ callbackUrl: "/login" })}
           className="bg-emerald-400 hover:bg-indigo-500 text-white p-2 rounded transition-colors duration-200"
           title="Sign Out"
         >
