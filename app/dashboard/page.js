@@ -44,11 +44,10 @@ export default function ChatClient() {
 
   const sendMessage = async () => {
     if (!message || status !== "authenticated") return;
+    const newMessage = { message: message, type: 0, name: userName };
+    const updatedMessages = [...messages, newMessage];
     socket.emit("send_message", { message, name: userName });
-    setMessages((prev) => [
-      ...prev,
-      { message: message, type: 0, name: userName },
-    ]);
+    setMessages(updatedMessages);
     setMessage("");
     try {
       await fetch("/api/messages", {
@@ -58,7 +57,7 @@ export default function ChatClient() {
         },
         body: JSON.stringify({
           email: session?.user?.email,
-          messages: messages,
+          messages: updatedMessages,
         }),
       });
     } catch (error) {
