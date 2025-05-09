@@ -21,11 +21,25 @@ export default function ChatClient() {
     if (status === "authenticated") {
       socket = io("https://chat-backend-g9v3.onrender.com");
 
-      const handleReceiveMessage = (data) => {
-        setMessages((prev) => [
-          ...prev,
-          { message: data.message, name: data.name, type: 1 },
-        ]);
+      const handleReceiveMessage = async (data) => {
+        const newMessage = { message: data.message, name: data.name, type: 1 };
+        const updatedMessages = [...messages, newMessage];
+        setMessages(updatedMessages);
+        try {
+          await fetch("/api/messages", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: session?.user?.email,
+              messages: updatedMessages,
+            }),
+          });
+        } catch (error) {
+          console.error("Failed to save messages:", error);
+          setError("Failed to save messages");
+        }
       };
 
       socket.on("receive_message", handleReceiveMessage);
