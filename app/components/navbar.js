@@ -2,6 +2,7 @@
 import React from "react";
 import { useSession } from "next-auth/react";
 import { LogOut } from "lucide-react";
+import Link from "next/link";
 
 const Navbar = () => {
   const { data: session, status } = useSession();
@@ -13,7 +14,10 @@ const Navbar = () => {
           {status === "authenticated" ? "online" : "offline"}
         </p>
       </div>
-      <div className="absolute top-4 right-4">
+      <div>
+        <Link href='/CreateChatroomPage'>Make a chat room</Link>
+      </div>
+      <div>
         <button
           onClick={async () => signOut({ callbackUrl: "/login" })}
           className="bg-emerald-400 hover:bg-indigo-500 text-white p-2 rounded transition-colors duration-200"

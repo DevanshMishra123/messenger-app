@@ -13,7 +13,7 @@ export default async function Home() {
   }
 
   return (
-    <div className="bg-[url('/chat-bg.png')] bg-cover bg-center h-screen w-screen">
+    <div className="bg-[url('/chat-bg.png')] bg-cover bg-center h-screen w-screen overflow-x-hidden overflow-y-hidden">
       <Navbar />
       <ChatClient />;
     </div>

@@ -16,7 +16,7 @@ export default function ChatClient() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState(session?.user?.messages || []);
   const [error, setError] = useState("");
-  const [users, setUsers] = useState([]);
+  const [rooms, setRooms] = useState([]);
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -55,17 +55,17 @@ export default function ChatClient() {
     if (session?.user?.messages?.length) {
       setMessages(session.user.messages);
     }
-    const getUsers = async () => {
+    const getRooms = async () => {
       try {
-        const res = await fetch("/api/users");
+        const res = await fetch("/api/chatrooms");
         const data = await res.json();
-        const usernames = data.usernames;
-        setUsers(usernames);
+        const names = data.name;
+        setRooms(names);
       } catch (error) {
         console.error("Failed to save messages:", error);
       }
     };
-    getUsers();
+    getRooms();
   }, [session]);
 
   const sendMessage = async () => {
@@ -106,8 +106,8 @@ export default function ChatClient() {
 
   return (
     <div className="flex justify-between">
-      <div className="bg-black w-[150px]">{users.map((user,idx)=><div className="bg-black text-white py-4 px-4">{user}</div>)}</div>
-      <div className="flex flex-col items-center justify-center pt-8 px-16">
+      <div className="bg-black h-[615px] w-[150px] overflow-y-scroll">{rooms.map((room,idx)=><div key={idx} className="bg-black text-white py-4 px-4">{room}</div>)}</div>
+      <div className="flex flex-col items-center justify-center px-16">
         {error && (
           <div className="absolute top-6 right-6 bg-red-500 text-white px-4 py-2 rounded shadow-md animate-pulse z-50">
             {error}
