@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 
 const Chatroom = () => {
   const { roomId } = useParams();
+  console.log(roomId);
   const [room, setRoom] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
@@ -39,8 +40,8 @@ const Chatroom = () => {
       <h1>{room.name}</h1>
       <h2>Members:</h2>
       <ul>
-        {room.members.map((member) => (
-          <li key={member.email}>{member.email}</li>
+        {room.members.map((member,idx) => (
+          <li key={idx}>{member.email}</li>
         ))}
       </ul>
     </div>

@@ -6,6 +6,7 @@ import { useSession, signOut } from "next-auth/react";
 import { LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
 
 let socket;
 
@@ -17,6 +18,27 @@ export default function ChatClient() {
   const [messages, setMessages] = useState(session?.user?.messages || []);
   const [error, setError] = useState("");
   const [rooms, setRooms] = useState([]);
+  const router = useRouter()
+
+  const handleClick = async (room) => {
+    try {
+      const res = await fetch("/api/getId", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          room: room,
+        }),
+      });
+      const data = await res.json();
+      const id = data.roomId;
+      router.push(`/chatroom/${id}`)
+    } catch (error) {
+      console.error("Failed to open chatroom", error);
+      setError("Failed to open chatroom");
+    }
+  };
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -107,7 +129,13 @@ export default function ChatClient() {
 
   return (
     <div className="flex justify-between">
-      <div className="bg-black h-[615px] w-[150px] overflow-y-scroll">{rooms.map((room,idx)=><div key={idx} className="bg-black text-white py-4 px-4">{room}</div>)}</div>
+      <div className="bg-black h-[615px] w-[150px] overflow-y-scroll">
+        {rooms.map((room, idx) => (
+          <div key={idx} className="bg-black text-white py-4 px-4">
+            <button onClick={()=>handleClick(room)}>{room}</button>
+          </div>
+        ))}
+      </div>
       <div className="flex flex-col items-center justify-center px-16">
         {error && (
           <div className="absolute top-6 right-6 bg-red-500 text-white px-4 py-2 rounded shadow-md animate-pulse z-50">
