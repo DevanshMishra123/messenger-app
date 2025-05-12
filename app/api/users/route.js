@@ -6,10 +6,9 @@ export async function GET() {
     const mongoose = await dbConnect();
     const db = mongoose.connection.db;
 
-    const users = await db.collection("users").find({}, { projection: { name: 1, _id: 0 } }).toArray();
+    const users = await db.collection("users").find({}, { projection: { name: 1, email: 1, _id: 0 } }).toArray();
     const usernames = users.map(user => user.name);
-    const emailObjArray = await db.collection("users").find({}, { projection: { name: 1, _id: 0 } }).toArray();
-    const emails = emailObjArray.map(obj=>obj.email);
+    const emails = users.map(user => user.email);
 
     return new Response(JSON.stringify({
       message: "Messages updated successfully.",
