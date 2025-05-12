@@ -1,7 +1,7 @@
 import dbConnect from "../../../lib/mongodb";
 import bcrypt from "bcryptjs";
 import { getServerSession } from "next-auth";
-import { authOptions } from '../auth/[...nextauth]/route';
+import { authOptions } from "../auth/[...nextauth]/route";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
@@ -15,7 +15,10 @@ export async function POST(req) {
     const { name, password, members } = body;
 
     if (!name) {
-      return NextResponse.json({ message: "Room name is required" }, { status: 400 });
+      return NextResponse.json(
+        { message: "Room name is required" },
+        { status: 400 }
+      );
     }
 
     const mongoose = await dbConnect();
@@ -32,18 +35,28 @@ export async function POST(req) {
       name,
       password: hashedPassword,
       createdBy: session.user.email,
-      members: members.map(email => ({
+      members: members.map((email) => ({
         email,
         joined: false,
-        joinedAt: null
+        joinedAt: null,
       })),
-      createdAt: new Date()
+      createdAt: new Date(),
     });
 
-    return NextResponse.json({ message: "Room created", roomId: newRoom.insertedId }, { status: 200 });
+    const roomId = newRoom.insertedId.toString();
+    await db
+      .collection("chatrooms")
+      .updateOne({ _id: newRoom.insertedId }, { $set: { roomId } });
 
+    return NextResponse.json(
+      { message: "Room created", roomId },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Server error:", error);
-    return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
