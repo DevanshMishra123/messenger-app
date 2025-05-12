@@ -1,16 +1,18 @@
-import dbConnect from '../../../lib/mongodb';
-import { getSession } from "next-auth/react";
+import dbConnect from '../../../lib/mongodb'; 
+import { getServerSession } from "next-auth";  
+import { authOptions } from '../auth/[...nextauth]/route'; 
 
-export default async function handler(req, res) {
-  const session = await getSession({ req });
-
-  if (!session) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
-
+export async function GET(req) {
   try {
+    const session = await getServerSession(authOptions, req);
+
+    if (!session) {
+      return new Response(JSON.stringify({ message: "Unauthorized" }), { status: 401 });
+    }
+
     const mongoose = await dbConnect();
     const db = mongoose.connection.db;
+
     const chatrooms = await db
       .collection("chatrooms")
       .find({}, { projection: { name: 1 } }) 
@@ -18,9 +20,12 @@ export default async function handler(req, res) {
 
     const roomNames = chatrooms.map(room => room.name);
 
-    res.status(200).json({ roomNames });
+    return new Response(JSON.stringify({ roomNames }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (error) {
     console.error("Error fetching chatrooms:", error);
-    res.status(500).json({ message: "Server error" });
+    return new Response(JSON.stringify({ message: "Server error" }), { status: 500 });
   }
 }
