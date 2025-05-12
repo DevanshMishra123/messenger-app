@@ -67,10 +67,13 @@ export default function CreateChatroomPage() {
 
       const data = await res.json();
 
+      if (!res.ok) console.log(data.message)
+
       if (!res.ok) throw new Error(data.message || "Failed to create room");
 
       router.push(`/chatroom/${data.roomId}`);
     } catch (err) {
+      console.log(error,"server error")
       setError(err.message);
     }
   };
