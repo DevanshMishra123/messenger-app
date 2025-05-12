@@ -1,19 +1,25 @@
 import dbConnect from '../../../lib/mongodb';
 import bcrypt from "bcryptjs";
-import { getSession } from "next-auth/react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/authOptions"; 
+import { NextResponse } from "next/server";
 
-export default async function handler(req, res) {
-  if (req.method !== "POST") return res.status(405).end();
+export async function POST(req) {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
 
-  const session = await getSession({ req });
-  if (!session) return res.status(401).json({ message: "Unauthorized" });
+  const body = await req.json();
+  const { name, password, members } = body;
 
-  const { name, password, members } = req.body;
   const mongoose = await dbConnect();
   const db = mongoose.connection.db;
 
   const existing = await db.collection("chatrooms").findOne({ name });
-  if (existing) return res.status(409).json({ message: "Room name taken" });
+  if (existing) {
+    return NextResponse.json({ message: "Room name taken" }, { status: 409 });
+  }
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -29,5 +35,5 @@ export default async function handler(req, res) {
     createdAt: new Date()
   });
 
-  res.status(200).json({ message: "Room created", roomId: newRoom.insertedId });
+  return NextResponse.json({ message: "Room created", roomId: newRoom.insertedId });
 }
