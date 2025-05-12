@@ -31,10 +31,21 @@ export async function POST(req) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    function getRandomColor() {
+      const letters = "0123456789ABCDEF";
+      let color = "#";
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
+    const color = getRandomColor();
+
     const newRoom = await db.collection("chatrooms").insertOne({
       name,
       password: hashedPassword,
       createdBy: session.user.email,
+      color,
       members: members.map((email) => ({
         email,
         joined: false,

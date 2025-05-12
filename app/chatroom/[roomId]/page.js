@@ -36,7 +36,7 @@ const Chatroom = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div>
+    <div style={{ backgroundColor: room.color }}>
       <h1>{room.name}</h1>
       <h2>Members:</h2>
       <ul>

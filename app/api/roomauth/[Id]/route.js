@@ -49,6 +49,7 @@ export async function GET(req, { params }) {
         JSON.stringify({
           roomId: room.roomId,
           name: room.name,
+          color: room.color,
           members: room.members,
         }),
         { status: 200 }
