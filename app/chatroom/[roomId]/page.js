@@ -5,7 +5,6 @@ import { getSession } from "next-auth/react";
 import { connectDB } from "@/lib/mongodb"; 
 
 const Chatroom = () => {
-  const router = useRouter();
   const { roomId } = useParams();
   const [room, setRoom] = useState(null);
   const [error, setError] = useState("");
