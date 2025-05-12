@@ -1,11 +1,12 @@
+"use client"
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { getSession } from "next-auth/react";
 import { connectDB } from "@/lib/mongodb"; 
 
 const Chatroom = () => {
   const router = useRouter();
-  const { roomId } = router.query;
+  const { roomId } = useParams();
   const [room, setRoom] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
