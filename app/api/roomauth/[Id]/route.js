@@ -1,23 +1,33 @@
-import { getSession } from "next-auth/react";
-import { connectDB } from "@/lib/mongodb";
+import { getServerSession } from "next-auth";
+import { ObjectId } from "mongodb";
+import dbConnect from '../../../../lib/mongodb';
+import { authOptions } from '../../auth/[...nextauth]/route';
 
-export default async function handler(req, res) {
-  const { Id } = req.query;
-  const session = await getSession({ req });
+export async function GET(req, { params }) {
+  const { Id } = params;  
 
-  if (!session) return res.status(401).json({ message: "Login required" });
+  const session = await getServerSession(authOptions, req, res); 
 
-  const db = await connectDB();
+  if (!session) {
+    return new Response(JSON.stringify({ message: "Login required" }), { status: 401 });
+  }
+
+  const db = await dbConnect();
   const room = await db.collection("chatrooms").findOne({ _id: new ObjectId(Id) });
 
-  if (!room) return res.status(404).json({ message: "Room not found" });
+  if (!room) {
+    return new Response(JSON.stringify({ message: "Room not found" }), { status: 404 });
+  }
 
   const member = room.members.find(m => m.email === session.user.email);
-  if (!member) return res.status(403).json({ message: "You are not a member of this room" });
+  if (!member) {
+    return new Response(JSON.stringify({ message: "You are not a member of this room" }), { status: 403 });
+  }
 
-  res.status(200).json({
+  return new Response(JSON.stringify({
     roomId: room._id,
     name: room.name,
     members: room.members,
-  });
+  }), { status: 200 });
 }
+

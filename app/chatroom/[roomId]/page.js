@@ -1,8 +1,6 @@
 "use client"
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { getSession } from "next-auth/react";
-import { connectDB } from "@/lib/mongodb"; 
 
 const Chatroom = () => {
   const { roomId } = useParams();
