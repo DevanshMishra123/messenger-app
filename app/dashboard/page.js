@@ -59,6 +59,7 @@ export default function ChatClient() {
       try {
         const res = await fetch("/api/chatrooms");
         const data = await res.json();
+        console.log(data);
         const names = data.name;
         setRooms(names);
       } catch (error) {
