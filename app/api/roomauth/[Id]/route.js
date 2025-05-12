@@ -6,7 +6,7 @@ import { authOptions } from '../../auth/[...nextauth]/route';
 export async function GET(req, { params }) {
   const { Id } = params;  
 
-  const session = await getServerSession(authOptions, req, res); 
+  const session = await getServerSession(authOptions); 
 
   if (!session) {
     return new Response(JSON.stringify({ message: "Login required" }), { status: 401 });

@@ -60,7 +60,7 @@ export default function ChatClient() {
         const res = await fetch("/api/chatrooms");
         const data = await res.json();
         console.log(data);
-        const names = data.name;
+        const names = data.roomNames;
         setRooms(names);
       } catch (error) {
         console.error("Failed to save messages:", error);
