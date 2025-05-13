@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
-import { getSocket } from "@/lib/socket";
+import { initiateSocket, getSocket } from "@/lib/socket";
 import { useParams } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -59,6 +59,7 @@ useEffect(() => {
 
   useEffect(() => {
     if (status === "authenticated") {
+      initiateSocket();
       const socket = getSocket();
 
       if (!socket) {
