@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { initiateSocket, getSocket } from "@/lib/socket ";
+import { initiateSocket, getSocket } from "@/lib/socket";
 import { useSession, signOut } from "next-auth/react";
 import { LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";

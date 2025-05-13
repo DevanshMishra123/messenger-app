@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
-import { getSocket } from "../../../lib/mongodb";
+import { getSocket } from "@/lib/socket";
 import { useParams } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
