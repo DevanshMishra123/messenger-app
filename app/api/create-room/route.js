@@ -37,15 +37,17 @@ export async function POST(req) {
       for (let i = 0; i < 6; i++) {
         color += letters[Math.floor(Math.random() * 16)];
       }
-      return color;
+      let imgNum = 1 + Math.floor(Math.random() * 6)
+      return {color, imgNum};
     }
-    const color = getRandomColor();
+    const {color, imgNum} = getRandomColor();
 
     const newRoom = await db.collection("chatrooms").insertOne({
       name,
       password: hashedPassword,
       createdBy: session.user.email,
       color,
+      imgNum,
       members: members.map((email) => ({
         email,
         joined: false,

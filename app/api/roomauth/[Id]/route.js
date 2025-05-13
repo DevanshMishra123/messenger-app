@@ -50,6 +50,7 @@ export async function GET(req, { params }) {
           roomId: room.roomId,
           name: room.name,
           color: room.color,
+          imgNum: room.imgNum,
           members: room.members,
         }),
         { status: 200 }
