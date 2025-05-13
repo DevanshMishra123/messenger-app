@@ -1,14 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { io } from "socket.io-client";
+import { initiateSocket, getSocket } from "@/lib/socket ";
 import { useSession, signOut } from "next-auth/react";
 import { LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
-
-let socket;
 
 export default function ChatClient() {
   const { data: session, status } = useSession();
@@ -18,7 +16,7 @@ export default function ChatClient() {
   const [messages, setMessages] = useState(session?.user?.messages || []);
   const [error, setError] = useState("");
   const [rooms, setRooms] = useState([]);
-  const router = useRouter()
+  const router = useRouter();
 
   const handleClick = async (room) => {
     try {
@@ -33,7 +31,7 @@ export default function ChatClient() {
       });
       const data = await res.json();
       const id = data.roomId;
-      router.push(`/chatroom/${id}`)
+      router.push(`/chatroom/${id}`);
     } catch (error) {
       console.error("Failed to open chatroom", error);
       setError("Failed to open chatroom");
@@ -42,7 +40,10 @@ export default function ChatClient() {
 
   useEffect(() => {
     if (status === "authenticated") {
-      socket = io("https://chat-backend-g9v3.onrender.com");
+      initiateSocket();
+      const socket = getSocket();
+
+      if (!socket) return;
 
       const handleReceiveMessage = async (data) => {
         const newMessage = { message: data.message, name: data.name, type: 1 };
@@ -85,7 +86,7 @@ export default function ChatClient() {
         const names = data.roomNames;
         setRooms(names);
       } catch (error) {
-        console.error("Failed to save messages:", error);
+        console.error("Failed to fetch rooms", error);
       }
     };
     getRooms();
@@ -132,7 +133,7 @@ export default function ChatClient() {
       <div className="bg-black h-[615px] w-[150px] overflow-y-scroll">
         {rooms.map((room, idx) => (
           <div key={idx} className="bg-black text-white py-4 px-4">
-            <button onClick={()=>handleClick(room)}>{room}</button>
+            <button onClick={() => handleClick(room)}>{room}</button>
           </div>
         ))}
       </div>
