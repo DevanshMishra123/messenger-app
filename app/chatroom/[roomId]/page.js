@@ -12,6 +12,8 @@ const Chatroom = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState(false);
+  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState([])
   const router = useRouter();
 
   useEffect(() => {
@@ -36,6 +38,30 @@ const Chatroom = () => {
 
     fetchChatroomData();
   }, [roomId]);
+
+  const sendMessage = async () => {
+    if (!message) return;
+    const newMessage = { message: message, type: 0, name: userName };
+    const updatedMessages = [...messages, newMessage];
+    socket.emit("send_message", { message, name: userName });
+    setMessages(updatedMessages);
+    setMessage("");
+    try {
+      await fetch("/api/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: session?.user?.email,
+          messages: updatedMessages,
+        }),
+      });
+    } catch (error) {
+      console.error("Failed to save messages:", error);
+      setError("Failed to save messages");
+    }
+  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
@@ -75,7 +101,7 @@ const Chatroom = () => {
         <div className="overflow-y-scroll"></div>
         <div className="flex fixed bottom-0 right-0 w-full items-center gap-3 p-4 border-t border-white/10 bg-white/5 backdrop-blur-sm">
           <Input></Input>
-          <Button>Send</Button>
+          <Button onClick={sendMessage}>Send</Button>
         </div>
       </div>
     </div>
