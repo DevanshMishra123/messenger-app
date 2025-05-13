@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const Chatroom = () => {
   const { roomId } = useParams();
@@ -69,7 +71,13 @@ const Chatroom = () => {
           </button>
         </div>
       </div>
-      <div className="flex flex-col overflow-y-scroll px-2"></div>
+      <div className="flex flex-col px-2 h-[75vh]">
+        <div className="overflow-y-scroll"></div>
+        <div className="flex fixed bottom-0 right-0 w-full items-center gap-3 p-4 border-t border-white/10 bg-white/5 backdrop-blur-sm">
+          <Input></Input>
+          <Button>Send</Button>
+        </div>
+      </div>
     </div>
   );
 };
