@@ -21,19 +21,15 @@ const Chatroom = () => {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
 
-  useEffect(() => {
-    if (!roomId) return;
+useEffect(() => {
+    if (!roomId || !session?.user?.email) return;
 
     const fetchChatroomData = async () => {
       try {
         const res = await fetch(`/api/roomauth/${roomId}`);
         const data = await res.json();
-
-        if (res.ok) {
-          setRoom(data);
-        } else {
-          setError(data.message);
-        }
+        if (res.ok) setRoom(data);
+        else setError(data.message);
       } catch (err) {
         setError("An error occurred while fetching the chatroom");
       } finally {
@@ -46,10 +42,10 @@ const Chatroom = () => {
         const res = await fetch("/api/get-messages", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ roomId, email: session?.user?.email }),
+          body: JSON.stringify({ roomId, email: session.user.email }),
         });
         const data = await res.json();
-        if (res.ok) setMessages(data.messages);
+        if (res.ok) setMessages(data.messages || []);
         else setError(data.message);
       } catch (error) {
         console.error("Failed to get messages:", error);
@@ -64,12 +60,13 @@ const Chatroom = () => {
   useEffect(() => {
     if (status === "authenticated") {
       const socket = getSocket();
-      socketRef.current = socket;
 
       if (!socket) {
         console.warn("Socket is not connected");
         return;
       }
+
+      socketRef.current = socket;
       const handleReceiveMessage = async (data) => {
         const newMessage = { message: data.message, name: data.name, type: 1 };
         const updatedMessages = [...messages, newMessage];
@@ -98,15 +95,9 @@ const Chatroom = () => {
         socket.off("receive_message", handleReceiveMessage);
       };
     }
-  }, [status]);
+  }, [status, roomId, session]);
 
-  const sendMessage = async () => {
-    if (!message || status !== "authenticated") return;
-    const newMessage = { message: message, type: 0, name: userName };
-    const updatedMessages = [...messages, newMessage];
-    socket.emit("send_message", { message, name: userName });
-    setMessages((prev) => [...prev, newMessage]);
-    setMessage("");
+  const saveMessages = async (updatedMessages) => {
     try {
       await fetch("/api/room-messages", {
         method: "POST",
@@ -123,6 +114,24 @@ const Chatroom = () => {
       console.error("Failed to save messages:", error);
       setError("Failed to save messages");
     }
+  };
+
+  const sendMessage = async () => {
+    if (!message.trim() || !socketRef.current) return;
+
+    const newMessage = { message, type: 0, name: userName };
+    setMessages((prev) => {
+      const updatedMessages = [...prev, newMessage];
+      saveMessages(updatedMessages);
+      return updatedMessages;
+    });
+
+    socketRef.current.emit("send_message", {
+      message,
+      name: userName,
+    });
+
+    setMessage("");
   };
 
   if (loading) return <p>Loading...</p>;
