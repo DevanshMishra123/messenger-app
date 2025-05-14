@@ -59,7 +59,7 @@ export default function ChatClient() {
             },
             body: JSON.stringify({
               email: session?.user?.email,
-              messages: updatedMessages,
+              message: newMessage,
             }),
           });
         } catch (error) {
@@ -109,7 +109,7 @@ export default function ChatClient() {
         },
         body: JSON.stringify({
           email: session?.user?.email,
-          messages: updatedMessages,
+          messages: newMessage,
         }),
       });
     } catch (error) {
