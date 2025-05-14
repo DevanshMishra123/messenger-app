@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { initiateSocket, getSocket } from "@/lib/socket";
 import { useSession, signOut } from "next-auth/react";
 import { LogOut } from "lucide-react";
@@ -12,6 +12,7 @@ export default function ChatClient() {
   const { data: session, status } = useSession();
   console.log(session?.user?.messages);
   const userName = session?.user?.name;
+  const socketRef = useRef(null);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState(session?.user?.messages || []);
   const [error, setError] = useState("");
@@ -44,6 +45,7 @@ export default function ChatClient() {
       const socket = getSocket();
 
       if (!socket) return;
+      socketRef.current = socket;
 
       const handleReceiveMessage = async (data) => {
         const newMessage = { message: data.message, name: data.name, type: 1 };
@@ -96,7 +98,7 @@ export default function ChatClient() {
     if (!message || status !== "authenticated") return;
     const newMessage = { message: message, type: 0, name: userName };
     const updatedMessages = [...messages, newMessage];
-    socket.emit("send_message", { message, name: userName });
+    socketRef.emit("send_message", { message, name: userName });
     setMessages(updatedMessages);
     setMessage("");
     try {
