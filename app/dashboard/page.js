@@ -130,10 +130,10 @@ export default function ChatClient() {
 
   return (
     <div className="flex justify-between">
-      <div className="bg-black h-[615px] w-[150px] overflow-y-scroll">
+      <div className="bg-black h-[615px] sm:h-[615px] w-full sm:w-[150px] overflow-y-scroll sm:overflow-y-auto flex sm:block whitespace-nowrap">
         {rooms.map((room, idx) => (
-          <div key={idx} className="bg-black text-white py-4 px-4">
-            <button onClick={() => handleClick(room)}>{room}</button>
+          <div key={idx} className="bg-black text-white px-4 py-2 border-b border-white/10 sm:border-0 sm:py-4 sm:px-4">
+            <button className="w-full text-left truncate sm:whitespace-normal" onClick={() => handleClick(room)}>{room}</button>
           </div>
         ))}
       </div>
