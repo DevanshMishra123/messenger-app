@@ -98,7 +98,7 @@ export default function ChatClient() {
     if (!message || status !== "authenticated") return;
     const newMessage = { message: message, type: 0, name: userName };
     const updatedMessages = [...messages, newMessage];
-    socketRef.emit("send_message", { message, name: userName });
+    socketRef.current.emit("send_message", { message, name: userName });
     setMessages(updatedMessages);
     setMessage("");
     try {
