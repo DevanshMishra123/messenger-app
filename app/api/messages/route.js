@@ -4,6 +4,7 @@ import { hash } from 'bcryptjs';
 export async function POST(req) {
   try {
     const { email, messages } = await req.json();
+    console.log(messages);
 
     const mongoose = await dbConnect();
     const db = mongoose.connection.db;
