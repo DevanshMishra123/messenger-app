@@ -19,18 +19,17 @@ export async function POST(req) {
 
     if (result.matchedCount === 0) {
       await db.collection("messages").updateOne(
-        { roomId: roomId },
+        { roomId },
         {
           $push: {
             messages: {
-              email: email,
+              email,
               message: messages,
             },
           },
         },
         { upsert: true }
       );
-      console.log("Upsert result:", upsertResult);
     }
 
     return new Response(
