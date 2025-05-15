@@ -18,14 +18,14 @@ export async function POST(req) {
     const roomDoc = await db.collection("messages").findOne({ roomId: roomId });
 
     if (!roomDoc) {
-      return NextResponse.json({ message: "Room not found" }, { status: 404 });
+      return NextResponse.json({ messages: [] }, { status: 200 });
     }
 
     const userMessageEntry = roomDoc.messages.find(
       (entry) => entry.email === email
     );
 
-    return NextResponse.json({ messages: userMessageEntry.message }, { status: 200 });
+    return NextResponse.json({ messages: userMessageEntry.message || [] }, { status: 200 });
   } catch (error) {
     console.error("Error fetching room:", error);
     return NextResponse.json(

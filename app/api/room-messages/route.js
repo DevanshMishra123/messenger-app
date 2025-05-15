@@ -8,10 +8,27 @@ export async function POST(req) {
     const mongoose = await dbConnect();
     const db = mongoose.connection.db;
 
-    await db.collection("messages").updateOne(
-      { roomId: roomId, "messages.email": email }, 
-      { $set: { "messages.$.message": messages } } 
-    );
+    await db
+      .collection("messages")
+      .updateOne(
+        { roomId: roomId, "messages.email": email },
+        { $set: { "messages.$.message": messages } }
+      );
+
+    if (result.matchedCount === 0) {
+      await db.collection("messages").updateOne(
+        { roomId: roomId },
+        {
+          $push: {
+            messages: {
+              email: email,
+              message: messages,
+            },
+          },
+        },
+        { upsert: true }
+      );
+    }
 
     return new Response(
       JSON.stringify({ message: "Messages updated successfully." }),
