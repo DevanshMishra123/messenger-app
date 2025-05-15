@@ -21,7 +21,7 @@ export async function POST(req) {
     const roomDoc = await db.collection("chatrooms").findOne({ name: room });
 
     if (!roomDoc) {
-      return NextResponse.json({ message: "Room not found" }, { status: 404 });
+      return NextResponse.json({ message: "Your Room not found" }, { status: 404 });
     }
 
     return NextResponse.json({ roomId: roomDoc.roomId }, { status: 200 });

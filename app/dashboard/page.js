@@ -32,6 +32,7 @@ export default function ChatClient() {
       });
       const data = await res.json();
       const id = data.roomId;
+      console.log(id);
       router.push(`/chatroom/${id}`);
     } catch (error) {
       console.error("Failed to open chatroom", error);
