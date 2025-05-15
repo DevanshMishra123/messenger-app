@@ -21,6 +21,7 @@ export async function POST(req) {
       await db.collection("messages").updateOne(
         { roomId },
         {
+          $setOnInsert: { roomId, messages: [] },
           $push: {
             messages: {
               email,
