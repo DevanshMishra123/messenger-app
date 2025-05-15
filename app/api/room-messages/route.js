@@ -22,7 +22,7 @@ export async function POST(req) {
         { roomId },
         {
           $setOnInsert: { roomId, messages: [] },
-          $push: {
+          $set: {
             messages: {
               email,
               message: messages,
