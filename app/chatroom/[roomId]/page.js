@@ -49,7 +49,6 @@ useEffect(() => {
         else setError(data.message);
       } catch (error) {
         console.error("Failed to get messages:", error);
-        setError("Failed to get messages");
       }
     };
 
