@@ -84,6 +84,7 @@ export default function ChatClient() {
           body: JSON.stringify({ email: session?.user?.email }),
         });
         const data = await res.json();
+        console.log("Fetched messages:", data.messages);
         setMessages(data.messages || []);
       } catch (error) {
         console.error("Failed to fetch messages:", error);
