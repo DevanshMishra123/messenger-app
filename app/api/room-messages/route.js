@@ -8,7 +8,7 @@ export async function POST(req) {
     const mongoose = await dbConnect();
     const db = mongoose.connection.db;
 
-    await db
+    const result = await db
       .collection("messages")
       .updateOne(
         { roomId: roomId, "messages.email": email },
