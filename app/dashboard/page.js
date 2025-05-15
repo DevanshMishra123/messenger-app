@@ -50,7 +50,7 @@ export default function ChatClient() {
       const handleReceiveMessage = async (data) => {
         const newMessage = { message: data.message, name: data.name, type: 1 };
         const updatedMessages = [...messages, newMessage];
-        setMessages(updatedMessages);
+        setMessages((prevMessages) => [...prevMessages, newMessage]);
         try {
           await fetch("/api/messages", {
             method: "POST",
