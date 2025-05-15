@@ -15,6 +15,8 @@ export async function POST(req) {
         { $set: { "messages.$.message": messages } }
       );
 
+    console.log("Update result:", result);
+
     if (result.matchedCount === 0) {
       await db.collection("messages").updateOne(
         { roomId: roomId },
@@ -28,6 +30,7 @@ export async function POST(req) {
         },
         { upsert: true }
       );
+      console.log("Upsert result:", upsertResult);
     }
 
     return new Response(
