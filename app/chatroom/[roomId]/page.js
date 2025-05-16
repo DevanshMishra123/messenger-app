@@ -136,6 +136,7 @@ useEffect(() => {
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
+  if (!room?.imgNum) return <div>Loading...</div>;
 
   return (
     <div
