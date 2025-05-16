@@ -25,7 +25,14 @@ export async function POST(req) {
       (entry) => entry.email === email
     );
 
-    return NextResponse.json({ messages: userMessageEntry.message || [] }, { status: 200 });
+    if (!userMessageEntry) {
+      return NextResponse.json({ messages: [] }, { status: 200 });
+    }
+
+    return NextResponse.json(
+      { messages: userMessageEntry.message || [] },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Error fetching room:", error);
     return NextResponse.json(
