@@ -18,19 +18,29 @@ export async function POST(req) {
     console.log("Update result:", result);
 
     if (result.matchedCount === 0) {
-      await db.collection("messages").updateOne(
-        { roomId },
-        {
-          $setOnInsert: { roomId, messages: [] },
-          $set: {
-            messages: {
-              email,
-              message: messages,
+      const doc = await db.collection("messages").findOne({ roomId: roomId });
+
+      if (!doc) {
+        await db
+          .collection("messages")
+          .updateOne(
+            { roomId: roomId },
+            {
+              $set: {
+                roomId: roomId,
+                messages: [{ email, message: messages }],
+              },
             },
-          },
-        },
-        { upsert: true }
-      );
+            { upsert: true }
+          );
+      } else {
+        await db
+          .collection("messages")
+          .updateOne(
+            { roomId: roomId },
+            { $push: { messages: { email, message: messages } } }
+          );
+      }
     }
 
     return new Response(
