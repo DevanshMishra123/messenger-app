@@ -21,10 +21,10 @@ export async function POST(req) {
       return NextResponse.json({ messages: [] }, { status: 200 });
     }
 
-    const userMessageEntry = roomDoc.messages.find(
+    const userMessageEntry = roomDoc.messages?.find(
       (entry) => entry.email === email
     );
-
+    
     if (!userMessageEntry) {
       return NextResponse.json({ messages: [] }, { status: 200 });
     }
