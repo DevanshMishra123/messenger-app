@@ -134,7 +134,7 @@ useEffect(() => {
     setMessage("");
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p>Loading...wait for sometime</p>;
   if (error) return <p>{error}</p>;
 
   return (
