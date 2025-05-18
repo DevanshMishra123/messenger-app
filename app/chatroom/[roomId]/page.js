@@ -178,10 +178,10 @@ useEffect(() => {
               key={idx}
               className={`w-full flex ${
                 msg.type === 0 ? "justify-end" : "justify-start"
-              }mb-2`}
+              }`}
             >
               <div
-                className={`p-2 rounded-md max-w-[80%] text-white ${
+                className={`p-2 mb-2 rounded-md max-w-[80%] text-white ${
                   msg.type === 0 ? "bg-blue-500" : "bg-gray-500"
                 }`}
               >
