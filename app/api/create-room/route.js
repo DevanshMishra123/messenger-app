@@ -37,10 +37,10 @@ export async function POST(req) {
       for (let i = 0; i < 6; i++) {
         color += letters[Math.floor(Math.random() * 16)];
       }
-      let imgNum = 1 + Math.floor(Math.random() * 6)
-      return {color, imgNum};
+      let imgNum = 1 + Math.floor(Math.random() * 6);
+      return { color, imgNum };
     }
-    const {color, imgNum} = getRandomColor();
+    const { color, imgNum } = getRandomColor();
 
     const newRoom = await db.collection("chatrooms").insertOne({
       name,
@@ -60,6 +60,11 @@ export async function POST(req) {
     await db
       .collection("chatrooms")
       .updateOne({ _id: newRoom.insertedId }, { $set: { roomId } });
+
+    await db.collection("messages").insertOne({
+      roomId,
+      messages: members.map((email) => ({ email, message: [] })),
+    });
 
     return NextResponse.json(
       { message: "Room created", roomId },

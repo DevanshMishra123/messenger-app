@@ -3,21 +3,62 @@ import { hash } from "bcryptjs";
 
 export async function POST(req) {
   try {
-    const { roomId, email, messages } = await req.json();
+    const { roomId, email: senderEmail, messages } = await req.json();
 
     const mongoose = await dbConnect();
     const db = mongoose.connection.db;
 
-    const result = await db
-      .collection("messages")
-      .updateOne(
-        { roomId: roomId, "messages.email": email },
-        { $set: { "messages.$.message": messages } }
-      );
+    const latestMessage = messages[messages.length - 1];
+
+    await db.collection("messages").updateOne(
+      { roomId, "messages.email": senderEmail },
+      { $push: { "messages.$.message": latestMessage } }
+    );
 
     console.log("Update result:", result);
 
-    if (result.matchedCount === 0) {
+    const room = await db.collection("chatrooms").findOne({ roomId });
+    if (!room) {
+      return new Response(JSON.stringify({ message: "Room not found" }), {
+        status: 404,
+      });
+    }
+
+    const recipientEmails = room.members
+      .map((m) => m.email)
+      .filter((e) => e !== senderEmail);
+
+    const receivedMessage = {
+      ...latestMessage,
+      type: 1, 
+    };
+
+    const bulkOps = recipientEmails.map((email) => ({
+      updateOne: {
+        filter: { roomId, "messages.email": email },
+        update: { $push: { "messages.$.message": receivedMessage } },
+      },
+    }));
+
+    if (bulkOps.length) {
+      await db.collection("messages").bulkWrite(bulkOps);
+    }
+
+    return new Response(
+      JSON.stringify({ message: "Messages updated successfully." }),
+      {
+        status: 201,
+      }
+    );
+  } catch (error) {
+    console.error(error);
+    return new Response(JSON.stringify({ message: "Server error" }), {
+      status: 500,
+    });
+  }
+}
+/*
+if (result.matchedCount === 0) {
       const doc = await db.collection("messages").findOne({ roomId: roomId });
 
       if (!doc) {
@@ -42,17 +83,4 @@ export async function POST(req) {
           );
       }
     }
-
-    return new Response(
-      JSON.stringify({ message: "Messages updated successfully." }),
-      {
-        status: 201,
-      }
-    );
-  } catch (error) {
-    console.error(error);
-    return new Response(JSON.stringify({ message: "Server error" }), {
-      status: 500,
-    });
-  }
-}
+*/

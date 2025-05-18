@@ -71,22 +71,6 @@ useEffect(() => {
         const newMessage = { message: data.message, name: data.name, type: 1 };
         const updatedMessages = [...messages, newMessage];
         setMessages((prev) => [...prev, newMessage]);
-        try {
-          await fetch("/api/room-messages", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              roomId: roomId,
-              email: session?.user?.email,
-              messages: updatedMessages,
-            }),
-          });
-        } catch (error) {
-          console.error("Failed to save messages:", error);
-          setError("Failed to save messages");
-        }
       };
 
       socket.on("receive_message", handleReceiveMessage);
@@ -207,3 +191,21 @@ useEffect(() => {
 };
 
 export default Chatroom;
+/*
+try {
+          await fetch("/api/room-messages", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              roomId: roomId,
+              email: session?.user?.email,
+              messages: updatedMessages,
+            }),
+          });
+        } catch (error) {
+          console.error("Failed to save messages:", error);
+          setError("Failed to save messages");
+        }
+*/
