@@ -33,15 +33,18 @@ export async function POST(req) {
       type: 1, 
     };
 
-    const bulkOps = recipientEmails.map((email) => ({
-      updateOne: {
-        filter: { roomId, "messages.email": email },
-        update: { $push: { "messages.$.message": receivedMessage } },
-      },
-    }));
-
-    if (bulkOps.length) {
-      await db.collection("messages").bulkWrite(bulkOps);
+    for (const email of recipientEmails) {
+      await db.collection("messages").updateOne(
+        { roomId },
+        {
+          $push: {
+            "messages.$[elem].message": receivedMessage,
+          },
+        },
+        {
+          arrayFilters: [{ "elem.email": email }],
+        }
+      );
     }
 
     return new Response(
