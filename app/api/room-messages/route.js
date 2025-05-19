@@ -17,8 +17,6 @@ export async function POST(req) {
         { $push: { "messages.$.message": latestMessage } }
       );
 
-    console.log("Update result:", result);
-
     const room = await db.collection("chatrooms").findOne({ roomId });
     if (!room) {
       return new Response(JSON.stringify({ message: "Room not found" }), {
