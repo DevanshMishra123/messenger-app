@@ -10,10 +10,12 @@ export async function POST(req) {
 
     const latestMessage = messages[messages.length - 1];
 
-    await db.collection("messages").updateOne(
-      { roomId, "messages.email": senderEmail },
-      { $push: { "messages.$.message": latestMessage } }
-    );
+    await db
+      .collection("messages")
+      .updateOne(
+        { roomId, "messages.email": senderEmail },
+        { $push: { "messages.$.message": latestMessage } }
+      );
 
     console.log("Update result:", result);
 
@@ -30,21 +32,16 @@ export async function POST(req) {
 
     const receivedMessage = {
       ...latestMessage,
-      type: 1, 
+      type: 1,
     };
 
     for (const email of recipientEmails) {
-      await db.collection("messages").updateOne(
-        { roomId },
-        {
-          $push: {
-            "messages.$[elem].message": receivedMessage,
-          },
-        },
-        {
-          arrayFilters: [{ "elem.email": email }],
-        }
-      );
+      await db
+        .collection("messages")
+        .updateOne(
+          { roomId, "messages.email": email },
+          { $push: { "messages.$.message": receivedMessage } }
+        );
     }
 
     return new Response(
