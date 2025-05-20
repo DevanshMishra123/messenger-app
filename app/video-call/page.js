@@ -1,5 +1,6 @@
+"use client";
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams } from "next/navigation";
 import io from "socket.io-client";
 
 const VideoCall = () => {
