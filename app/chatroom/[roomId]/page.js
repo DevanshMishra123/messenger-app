@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const Chatroom = () => {
   const { roomId } = useParams();
@@ -142,6 +143,9 @@ useEffect(() => {
             </ul>
           )}
         </div>
+        <Link href='/video-call'>
+          video call
+        </Link>
         <div className="absolute left-1/2 transform -translate-x-1/2 w-40 h-40 rounded-full bg-white text-black flex justify-center items-center">
           {room.name}
         </div>

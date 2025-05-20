@@ -10,7 +10,7 @@ const VideoCall = ({ roomId }) => {
   const [isCalling, setIsCalling] = useState(false);
 
   useEffect(() => {
-    socketRef.current = io("http://localhost:4000");
+    socketRef.current = io("https://webrtc-backend-6rqg.onrender.com/");
     socketRef.current.emit("join-room", roomId);
 
     // Listen for offer
