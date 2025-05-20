@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
 import io from "socket.io-client";
 
-const VideoCall = ({ roomId }) => {
+const VideoCall = () => {
+  const { roomId } = useParams();
   const socketRef = useRef(null);
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);

@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 
 const Chatroom = () => {
   const { roomId } = useParams();
@@ -22,7 +21,7 @@ const Chatroom = () => {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
 
-useEffect(() => {
+  useEffect(() => {
     if (!roomId || !session?.user?.email) return;
 
     const fetchChatroomData = async () => {
@@ -143,9 +142,12 @@ useEffect(() => {
             </ul>
           )}
         </div>
-        <Link href='/video-call'>
-          video call
-        </Link>
+        <Button
+          onClick={() => router.push(`/video-call?roomId=${roomId}`)}
+          className="bg-emerald-400 hover:bg-indigo-500 text-white p-2 rounded transition-colors duration-200"
+        >
+          Video Call
+        </Button>
         <div className="absolute left-1/2 transform -translate-x-1/2 w-40 h-40 rounded-full bg-white text-black flex justify-center items-center">
           {room.name}
         </div>
