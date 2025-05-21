@@ -18,7 +18,7 @@ const VideoCall = () => {
 
     // Listen for offer
     socketRef.current.on("offer", async (offer) => {
-      console.log("Received offer:", offer);
+      console.log("Received offer:", JSON.stringify(offer));
       await createAnswer(offer);
     });
 
@@ -68,6 +68,7 @@ const VideoCall = () => {
     // 4. Listen for remote stream
     peer.ontrack = (event) => {
       remoteVideoRef.current.srcObject = event.streams[0];
+      console.log(remoteVideoRef.current.srcObject);
     };
 
     // 5. Send ICE candidates to other peer
