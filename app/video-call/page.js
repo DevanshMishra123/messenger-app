@@ -1,10 +1,15 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import io from "socket.io-client";
 
 const VideoCall = () => {
-  const { roomId } = useParams();
+  const params = useParams(); 
+  const searchParams = useSearchParams();
+  const roomIdFromParam = params.roomId;
+  const roomIdFromSearch = searchParams.get('roomId');
+  const roomId = roomIdFromParam || roomIdFromSearch;
+  console.log(roomId)
   const socketRef = useRef(null);
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
@@ -78,7 +83,10 @@ const VideoCall = () => {
           .play()
           .then(() => console.log("[REMOTE] Playing remote stream"))
           .catch((err) =>
-            console.error("[REMOTE] Autoplay issue, user interaction required", err)
+            console.error(
+              "[REMOTE] Autoplay issue, user interaction required",
+              err
+            )
           );
       }
     };
