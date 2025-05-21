@@ -68,7 +68,6 @@ const VideoCall = () => {
     // 4. Listen for remote stream
     peer.ontrack = (event) => {
       remoteVideoRef.current.srcObject = event.streams[0];
-      console.log(remoteVideoRef.current.srcObject);
     };
 
     // 5. Send ICE candidates to other peer
@@ -102,6 +101,8 @@ const VideoCall = () => {
     peer.ontrack = (event) => {
       remoteVideoRef.current.srcObject = event.streams[0];
     };
+
+    console.log(remoteVideoRef.current.srcObject)
 
     peer.onicecandidate = (event) => {
       if (event.candidate) {
