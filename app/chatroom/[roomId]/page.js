@@ -129,7 +129,7 @@ const Chatroom = () => {
     >
       <div
         style={{ backgroundColor: room.color }}
-        className="h-[30vh] relative flex justify-between items-center text-white py-4 px-8"
+        className="h-auto min-h-[30vh] relative flex flex-wrap sm:flex-nowrap justify-between items-center text-white gap-4 py-4 px-4 sm:px-8"
       >
         <div>
           <h2>
@@ -143,12 +143,14 @@ const Chatroom = () => {
             </ul>
           )}
         </div>
-        <Button
-          onClick={() => router.push(`/video-call?roomId=${roomId}`)}
-          className="bg-black hover:bg-indigo-500 text-white p-2 rounded transition-colors duration-200"
-        >
-          Video Call
-        </Button>
+        <div className="w-full sm:w-auto text-center">
+          <Button
+            onClick={() => router.push(`/video-call?roomId=${roomId}`)}
+            className="bg-black hover:bg-indigo-500 text-white p-2 rounded transition-colors duration-200 w-full sm:w-auto"
+          >
+            Video Call
+          </Button>
+        </div>
         <Link href={`/video-call?roomId=${roomId}`}>call</Link>
         <div className="absolute left-1/2 transform -translate-x-1/2 w-40 h-40 rounded-full bg-white text-black flex justify-center items-center">
           {room.name}
