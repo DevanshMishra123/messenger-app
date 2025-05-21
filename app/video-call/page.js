@@ -1,15 +1,12 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import io from "socket.io-client";
 
 const VideoCall = () => {
   const params = useParams(); 
-  const searchParams = useSearchParams();
-  const roomIdFromParam = params.roomId;
-  const roomIdFromSearch = searchParams.get('roomId');
-  const roomId = roomIdFromParam || roomIdFromSearch;
-  console.log(roomId)
+  const roomId = params.roomId;
+  console.log("room Id is:",roomId)
   const socketRef = useRef(null);
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
