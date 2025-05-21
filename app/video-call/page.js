@@ -4,8 +4,7 @@ import { useParams } from "next/navigation";
 import io from "socket.io-client";
 
 const VideoCall = () => {
-  const params = useParams(); 
-  const roomId = params.roomId;
+  const { roomId } = useParams();
   console.log("room Id is:",roomId)
   const socketRef = useRef(null);
   const localVideoRef = useRef(null);
