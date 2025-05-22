@@ -5,7 +5,7 @@ import io from "socket.io-client";
 
 const VideoCall = () => {
   const { roomId } = useParams();
-  console.log("room Id is:",roomId)
+  console.log("room Id is:", roomId);
   const socketRef = useRef(null);
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
@@ -127,12 +127,14 @@ const VideoCall = () => {
       console.log("[PEER] ontrack (answerer) fired:", event.streams);
       if (remoteVideoRef.current) {
         remoteVideoRef.current.srcObject = event.streams[0];
-        remoteVideoRef.current
-          .play()
-          .then(() => console.log("[REMOTE] Playing remote stream"))
-          .catch((err) =>
-            console.error("[REMOTE] Autoplay error (answerer)", err)
-          );
+        setTimeout(() => {
+          remoteVideoRef.current
+            .play()
+            .then(() => console.log("[REMOTE] Playing remote stream"))
+            .catch((err) =>
+              console.error("[REMOTE] Autoplay error (answerer)", err)
+            );
+        }, 200);
       }
     };
 
@@ -336,4 +338,21 @@ const VideoCall = () => {
 };
 
 export default VideoCall;
+*/
+/*
+const server = {
+    iceServer: [
+      {
+        urls: ['stun:stun.1.google.com:19302','stun:stun2.1.google.com:19302'],
+      },
+    ],
+    iceCandidatePoolSize: 10,
+}
+
+let pc =  new RTCPeerConnection(servers)
+peer.ontrack = event => {
+  event.streams[0].getTracks().forEach(track => {
+    remoteVideoRef.current.srcObject.addTrack(track)
+  });
+}
 */
