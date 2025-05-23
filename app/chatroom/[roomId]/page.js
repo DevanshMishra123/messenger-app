@@ -151,7 +151,6 @@ const Chatroom = () => {
             Video Call
           </Button>
         </div>
-        <Link href={`/video-call?roomId=${roomId}`}>call</Link>
         <div className="absolute left-1/2 transform -translate-x-1/2 w-40 h-40 rounded-full bg-white text-black flex justify-center items-center">
           {room.name}
         </div>
