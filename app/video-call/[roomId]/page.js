@@ -73,20 +73,25 @@ const VideoCall = () => {
 
     peer.ontrack = (event) => {
       console.log("[PEER] ontrack event fired:", event.streams);
-      if (remoteVideoRef.current) {
-        remoteVideoRef.current.srcObject = event.streams[0];
-        remoteVideoRef.current
-          .play()
-          .then(() => console.log("[REMOTE] Playing remote stream"))
-          .catch((err) =>
-            console.error(
-              "[REMOTE] Autoplay issue, user interaction required",
-              err
-            )
-          );
-      }
-    };
 
+      const remoteStream = remoteVideoRef.current.srcObject || new MediaStream();
+
+      event.streams[0].getTracks().forEach((track) => {
+        remoteStream.addTrack(track);
+      });
+
+      remoteVideoRef.current.srcObject = remoteStream;
+
+      remoteVideoRef.current
+        .play()
+        .then(() => console.log("[REMOTE] Playing remote stream"))
+        .catch((err) =>
+          console.error(
+            "[REMOTE] Autoplay issue, user interaction required",
+            err
+          )
+        );
+    };
     peer.onicecandidate = (event) => {
       if (event.candidate) {
         console.log("[ICE] Sending candidate:", event.candidate);
@@ -124,18 +129,26 @@ const VideoCall = () => {
     });
 
     peer.ontrack = (event) => {
-      console.log("[PEER] ontrack (answerer) fired:", event.streams);
-      if (remoteVideoRef.current) {
-        remoteVideoRef.current.srcObject = event.streams[0];
-        setTimeout(() => {
-          remoteVideoRef.current
-            .play()
-            .then(() => console.log("[REMOTE] Playing remote stream"))
-            .catch((err) =>
-              console.error("[REMOTE] Autoplay error (answerer)", err)
-            );
-        }, 200);
-      }
+      console.log("[PEER] ontrack event fired:", event.streams);
+
+      const remoteStream =
+        remoteVideoRef.current.srcObject || new MediaStream();
+
+      event.streams[0].getTracks().forEach((track) => {
+        remoteStream.addTrack(track);
+      });
+
+      remoteVideoRef.current.srcObject = remoteStream;
+
+      remoteVideoRef.current
+        .play()
+        .then(() => console.log("[REMOTE] Playing remote stream"))
+        .catch((err) =>
+          console.error(
+            "[REMOTE] Autoplay issue, user interaction required",
+            err
+          )
+        );
     };
 
     peer.onicecandidate = (event) => {
@@ -187,6 +200,20 @@ const VideoCall = () => {
 };
 
 export default VideoCall;
+/*
+console.log("[PEER] ontrack (answerer) fired:", event.streams);
+      if (remoteVideoRef.current) {
+        remoteVideoRef.current.srcObject = event.streams[0];
+        setTimeout(() => {
+          remoteVideoRef.current
+            .play()
+            .then(() => console.log("[REMOTE] Playing remote stream"))
+            .catch((err) =>
+              console.error("[REMOTE] Autoplay error (answerer)", err)
+            );
+        }, 200);
+      }
+*/
 
 /*
 "use client";
