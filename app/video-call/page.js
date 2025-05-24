@@ -214,6 +214,7 @@ const videoCall = () => {
   const myVideo = useRef();
   const userVideo = useRef();
   const connectionRef = useRef();
+  const socket = io('https://webrtc-backend-new.onrender.com')
 
   useEffect(() => {
     navigator.mediaDevices
