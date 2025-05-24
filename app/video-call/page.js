@@ -203,10 +203,10 @@ const VideoCall = () => {
 
 export default VideoCall;
 */
-const videoCall = () => {
+const VideoCall = () => {
   const [stream, setStream] = useState(null);
   const [me, setMe] = useState("");
-  const [call, setCall] = useState(false);
+  const [call, setCall] = useState(null); // now holds call data or null
   const [callAccepted, setCallAccepted] = useState(false);
   const [callEnded, setCallEnded] = useState(false);
   const [name, setName] = useState("");
@@ -214,20 +214,36 @@ const videoCall = () => {
   const myVideo = useRef();
   const userVideo = useRef();
   const connectionRef = useRef();
-  const socket = io("https://webrtc-backend-new.onrender.com");
+  const socketRef = useRef();
 
   useEffect(() => {
+    socketRef.current = io("https://webrtc-backend-new.onrender.com");
+
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((currentStream) => {
         setStream(currentStream);
-        myVideo.current.srcObject = currentStream;
+        if (myVideo.current) {
+          myVideo.current.srcObject = currentStream;
+        }
       });
-    socket.on("me", (id) => setMe(id));
-    socket.on("calluser", ({ from, name: callerName, signal }) => {
+
+    socketRef.current.on("me", (id) => setMe(id));
+
+    socketRef.current.on("calluser", ({ from, name: callerName, signal }) => {
       setCall({ isReceivedCall: true, from, name: callerName, signal });
     });
+
+    return () => {
+      socketRef.current.disconnect();
+    };
   }, []);
+
+  useEffect(() => {
+    if (myVideo.current && stream) {
+      myVideo.current.srcObject = stream;
+    }
+  }, [stream]);
 
   const answerCall = () => {
     setCallAccepted(true);
@@ -235,24 +251,25 @@ const videoCall = () => {
     const peer = new Peer({ initiator: false, trickle: false, stream });
 
     peer.on("signal", (data) => {
-      socket.emit("answercall", { signal: data, to: call.from });
+      socketRef.current.emit("answercall", { signal: data, to: call.from });
     });
 
     peer.on("stream", (currentStream) => {
-      userVideo.current.srcObject = currentStream;
+      if (userVideo.current) {
+        userVideo.current.srcObject = currentStream;
+      }
     });
 
     peer.signal(call.signal);
-
     connectionRef.current = peer;
   };
 
-  const callUser = (id) => {
+  const callUser = () => {
     const peer = new Peer({ initiator: true, trickle: false, stream });
 
     peer.on("signal", (data) => {
-      socket.emit("calluser", {
-        userToCall: id,
+      socketRef.current.emit("calluser", {
+        userToCall: me, // replace this with the actual target user id
         signalData: data,
         from: me,
         name,
@@ -260,23 +277,22 @@ const videoCall = () => {
     });
 
     peer.on("stream", (currentStream) => {
-      userVideo.current.srcObject = currentStream;
+      if (userVideo.current) {
+        userVideo.current.srcObject = currentStream;
+      }
     });
 
-    socket.on("callAccepted", (signal) => {
+    socketRef.current.on("callAccepted", (signal) => {
       setCallAccepted(true);
-
       peer.signal(signal);
-
-      connectionRef.current = peer;
     });
+
+    connectionRef.current = peer;
   };
 
   const leaveCall = () => {
     setCallEnded(true);
-
-    connectionRef.current.destroy();
-
+    connectionRef.current?.destroy();
     window.location.reload();
   };
 
@@ -331,7 +347,8 @@ const videoCall = () => {
   );
 };
 
-export default videoCall;
+export default VideoCall;
+
 /*
 console.log("[PEER] ontrack (answerer) fired:", event.streams);
       if (remoteVideoRef.current) {
