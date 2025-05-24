@@ -145,7 +145,7 @@ const Chatroom = () => {
         </div>
         <div className="absolute w-full sm:w-auto text-center">
           <Button
-            onClick={() => router.push(`/video-call/${roomId}`)}
+            onClick={() => router.push('/video-call')}
             className="bg-black hover:bg-indigo-500 text-white p-2 rounded transition-colors duration-200 w-full sm:w-auto"
           >
             Video Call
