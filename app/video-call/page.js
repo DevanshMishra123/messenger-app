@@ -2,7 +2,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import io from "socket.io-client";
+import { set } from "mongoose";
+import Peer from 'simple-peer';
 
+/*
 const VideoCall = () => {
   const { roomId } = useParams();
   console.log("room Id is:", roomId);
@@ -199,6 +202,109 @@ const VideoCall = () => {
 };
 
 export default VideoCall;
+*/
+const videoCall = () => {
+  const [stream, setStream] = useState(null);
+  const [me, setMe] = useState("");
+  const [call, setCall] = useState(false);
+  const [callAccepted, setCallAccepted] = useState(false);
+  const [callEnded, setCallEnded] = useState(false);
+  const [name, setName] = useState("");
+
+  const myVideo = useRef();
+  const userVideo = useRef();
+  const connectionRef = useRef();
+
+  useEffect(() => {
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
+      .then((currentStream) => {
+        setStream(currentStream);
+        myVideo.current.srcObject = currentStream;
+      });
+    socket.on("me", (id) => setMe(id));
+    socket.on("calluser", ({ from, name: callerName, signal }) => {
+      setCall({ isReceivedCall: true, from, name: callerName, signal });
+    });
+  });
+
+  const answerCall = () => {
+    setCallAccepted(true);
+
+    const peer = new Peer({ initiator: false, trickle: false, stream });
+
+    peer.on("signal", (data) => {
+      socket.emit("answercall", { signal: data, to: call.from });
+    });
+
+    peer.on("stream", (currentStream) => {
+      userVideo.current.srcObject = currentStream;
+    });
+
+    peer.signal(call.signal);
+
+    connectionRef.current = peer;
+  };
+
+  const callUser = (id) => {
+    const peer = new Peer({ initiator: true, trickle: false, stream });
+
+    peer.on("signal", (data) => {
+      socket.emit("calluser", {
+        userToCall: id,
+        signalData: data,
+        from: me,
+        name,
+      });
+    });
+
+    peer.on("stream", (currentStream) => {
+      userVideo.current.srcObject = currentStream;
+    });
+
+    socket.on("callAccepted", (signal) => {
+      setCallAccepted(true);
+
+      peer.signal(signal);
+
+      connectionRef.current = peer;
+    });
+  };
+
+  const leaveCall = () => {
+    setCallEnded(true);
+
+    connectionRef.current.destroy();
+
+    window.location.reload();
+  };
+
+  return (
+    <div>
+      <div className="relative w-full h-screen bg-black">
+        {callAccepted && !callEnded && (
+          <video
+            ref={userVideo}
+            autoPlay
+            playsInline
+            className="w-full h-full object-cover bg-black"
+          ></video>
+        )}
+        {stream && (
+          <video
+            ref={myVideo}
+            autoPlay
+            playsInline
+            muted
+            className="absolute bottom-4 right-4 w-32 h-24 rounded-md border border-white shadow-lg object-cover"
+          ></video>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default videoCall;
 /*
 console.log("[PEER] ontrack (answerer) fired:", event.streams);
       if (remoteVideoRef.current) {
