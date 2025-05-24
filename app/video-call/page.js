@@ -227,7 +227,7 @@ const videoCall = () => {
     socket.on("calluser", ({ from, name: callerName, signal }) => {
       setCall({ isReceivedCall: true, from, name: callerName, signal });
     });
-  });
+  }, []);
 
   const answerCall = () => {
     setCallAccepted(true);
