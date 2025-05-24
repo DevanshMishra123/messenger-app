@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import io from "socket.io-client";
 import { set } from "mongoose";
-import Peer from 'simple-peer';
+import Peer from "simple-peer";
 
 /*
 const VideoCall = () => {
@@ -214,7 +214,7 @@ const videoCall = () => {
   const myVideo = useRef();
   const userVideo = useRef();
   const connectionRef = useRef();
-  const socket = io('https://webrtc-backend-new.onrender.com')
+  const socket = io("https://webrtc-backend-new.onrender.com");
 
   useEffect(() => {
     navigator.mediaDevices
@@ -299,6 +299,32 @@ const videoCall = () => {
             muted
             className="absolute bottom-4 right-4 w-32 h-24 rounded-md border border-white shadow-lg object-cover"
           ></video>
+        )}
+      </div>
+      <div className="fixed bottom-8 left-8 flex gap-4">
+        {!call && !callAccepted && (
+          <button
+            onClick={callUser}
+            className="px-4 py-2 bg-green-600 text-white rounded"
+          >
+            Start Call
+          </button>
+        )}
+        {call?.isReceivedCall && !callAccepted && (
+          <button
+            onClick={answerCall}
+            className="px-4 py-2 bg-blue-600 text-white rounded"
+          >
+            Answer Call
+          </button>
+        )}
+        {callAccepted && !callEnded && (
+          <button
+            onClick={leaveCall}
+            className="px-4 py-2 bg-red-600 text-white rounded"
+          >
+            End Call
+          </button>
         )}
       </div>
     </div>
