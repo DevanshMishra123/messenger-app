@@ -5,15 +5,7 @@ import { Grid, Typography, Paper } from "@mui/material";
 import { SocketContext } from "../socketContext";
 
 const VideoPlayer = () => {
-  const {
-    call,
-    callAccepted,
-    myVideo,
-    userVideo,
-    stream,
-    name,
-    callEnded,
-  } = useContext(SocketContext);
+  const { call, callAccepted, myVideo, userVideo, stream, name, callEnded } = useContext(SocketContext);
 
   return (
     <Grid
@@ -25,6 +17,11 @@ const VideoPlayer = () => {
         flexDirection: { xs: "column", sm: "row" },
       }}
     >
+      {!stream && (
+        <Typography variant="h6" color="textSecondary" gutterBottom>
+          Waiting for media stream...
+        </Typography>
+      )}
       {stream && (
         <Paper
           elevation={3}

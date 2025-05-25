@@ -41,6 +41,11 @@ const ContextProvider = ({children}) => {
       setCall({ isReceivedCall: true, from, name: callerName, signal });
     });
 
+    socketRef.current.on("callEnded", () => {
+      setCallEnded(true);
+      connectionRef.current?.destroy();
+    });
+
     return () => {
       socketRef.current.disconnect();
     };
@@ -71,12 +76,12 @@ const ContextProvider = ({children}) => {
     connectionRef.current = peer;
   };
 
-  const callUser = () => {
+  const callUser = (calleeId) => {
     const peer = new Peer({ initiator: true, trickle: false, stream });
 
     peer.on("signal", (data) => {
       socketRef.current.emit("calluser", {
-        userToCall: me, // replace this with the actual target user id
+        userToCall: calleeId, // replace this with the actual target user id
         signalData: data,
         from: me,
         name,
@@ -90,7 +95,7 @@ const ContextProvider = ({children}) => {
       }
     });
 
-    socketRef.current.on("callAccepted", (signal) => {
+    socketRef.current.once("callAccepted", (signal) => {
       setCallAccepted(true);
       peer.signal(signal);
     });
@@ -99,13 +104,15 @@ const ContextProvider = ({children}) => {
   };
 
   const leaveCall = () => {
+    setCall({});
+    setCallAccepted(false);
     setCallEnded(true);
     connectionRef.current?.destroy();
-    window.location.reload();
+
   };
 
   return (
-    <SocketContext.Provider value = {{call, callAccepted, myVideo, userVideo, stream, name, setName, callEnded, me, callUser, leaveCall, answerCall}}>
+    <SocketContext.Provider value = {{call, callAccepted, myVideo, userVideo, stream, name, setName, callEnded, me, callUser, leaveCall, answerCall, idToCall, setIdToCall}}>
       {children}
     </SocketContext.Provider>
   );

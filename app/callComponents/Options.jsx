@@ -6,9 +6,7 @@ import { Assignment, Phone, PhoneDisabled } from "@mui/icons-material";
 import { SocketContext } from "../socketContext";
 
 const Options = ({ children }) => {
-  const { callAccepted, name, setName, callEnded, me, callUser, leaveCall } =
-    useContext(SocketContext);
-  const [idToCall, setIdToCall] = useState("");
+  const { callAccepted, name, setName, callEnded, me, callUser, leaveCall, idToCall, setIdToCall } = useContext(SocketContext);
 
   const copyToClipboard = async (text) => {
     try {
