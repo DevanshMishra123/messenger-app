@@ -59,6 +59,12 @@ const ContextProvider = ({ children }) => {
     };
   }, []);
 
+  useEffect(() => {
+    if (stream && myVideo.current) {
+      myVideo.current.srcObject = stream;
+    }
+  }, [stream]);
+
   const answerCall = () => {
     if (!stream) {
       console.warn("Stream not ready yet. Cannot answer call.");
