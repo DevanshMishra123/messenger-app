@@ -8,6 +8,13 @@ import { useState, useEffect } from "react";
 const VideoPlayer = () => {
   const { call, callAccepted, myVideo, userVideo, stream, setStream, name, callEnded } = useContext(SocketContext);
 
+  useEffect(() => {
+    if (myVideo.current && stream) {
+      myVideo.current.srcObject = stream;
+    }
+  }, [stream]);
+
+
   return (
     <Grid
       container

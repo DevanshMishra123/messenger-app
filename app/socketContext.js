@@ -62,8 +62,10 @@ const ContextProvider = ({ children }) => {
   useEffect(() => {
     if (stream && myVideo.current) {
       myVideo.current.srcObject = stream;
+      console.log("stream:", stream);
+      console.log("myVideo ref:", myVideo.current);
     }
-  }, [stream]);
+  }, [myVideo, stream]);
 
   const answerCall = () => {
     if (!stream) {
