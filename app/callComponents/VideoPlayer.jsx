@@ -3,9 +3,30 @@
 import React, { useContext } from "react";
 import { Grid, Typography, Paper } from "@mui/material";
 import { SocketContext } from "../socketContext";
+import { useState, useEffect } from "react";
 
 const VideoPlayer = () => {
-  const { call, callAccepted, myVideo, userVideo, stream, name, callEnded } = useContext(SocketContext);
+  const { call, callAccepted, myVideo, userVideo, stream, setStream, name, callEnded } = useContext(SocketContext);
+
+  useEffect(() => {
+    if (!stream) {
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true })
+        .then((currentStream) => {
+          setStream(currentStream);
+          if (currentStream && myVideo.current) {
+            myVideo.current.srcObject = currentStream;
+          }
+        })
+        .catch((err) => console.error("Error accessing media devices.", err));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (myVideo.current && stream) {
+      myVideo.current.srcObject = stream;
+    }
+  }, [stream]);
 
   return (
     <Grid

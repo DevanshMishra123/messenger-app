@@ -26,15 +26,6 @@ const ContextProvider = ({children}) => {
   useEffect(() => {
     socketRef.current = io("https://webrtc-backend-new.onrender.com");
 
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((currentStream) => {
-        setStream(currentStream);
-        if (myVideo.current) {
-          myVideo.current.srcObject = currentStream;
-        }
-      });
-
     socketRef.current.on("me", (id) => setMe(id));
 
     socketRef.current.on("calluser", ({ from, name: callerName, signal }) => {
@@ -50,12 +41,6 @@ const ContextProvider = ({children}) => {
       socketRef.current.disconnect();
     };
   }, []);
-
-  useEffect(() => {
-    if (myVideo.current && stream) {
-      myVideo.current.srcObject = stream;
-    }
-  }, [stream]);
 
   const answerCall = () => {
     setCallAccepted(true);
@@ -112,10 +97,27 @@ const ContextProvider = ({children}) => {
   };
 
   return (
-    <SocketContext.Provider value = {{call, callAccepted, myVideo, userVideo, stream, name, setName, callEnded, me, callUser, leaveCall, answerCall, idToCall, setIdToCall}}>
+    <SocketContext.Provider value = {{call, callAccepted, myVideo, userVideo, stream, setStream, name, setName, callEnded, me, callUser, leaveCall, answerCall, idToCall, setIdToCall}}>
       {children}
     </SocketContext.Provider>
   );
 };
 
 export { ContextProvider, SocketContext }
+/*
+navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
+      .then((currentStream) => {
+        setStream(currentStream);
+        if (myVideo.current) {
+          myVideo.current.srcObject = currentStream;
+        }
+      });
+*/
+/*
+useEffect(() => {
+    if (myVideo.current && stream) {
+      myVideo.current.srcObject = stream;
+    }
+  }, [stream]);
+*/
