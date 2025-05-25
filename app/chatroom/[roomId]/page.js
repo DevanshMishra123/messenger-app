@@ -15,7 +15,6 @@ const Chatroom = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const userName = session?.user?.name;
-  const { startMedia} = useContext(SocketContext)
   const socketRef = useRef(null);
   const [room, setRoom] = useState(null);
   const [error, setError] = useState("");
@@ -147,10 +146,7 @@ const Chatroom = () => {
         </div>
         <div className="absolute w-full sm:w-auto text-center">
           <Button
-            onClick={() => {
-              startMedia()
-              router.push('/video-call')
-            }}
+            onClick={() => router.push('/video-call')}
             className="bg-black hover:bg-indigo-500 text-white p-2 rounded transition-colors duration-200 w-full sm:w-auto"
           >
             Video Call

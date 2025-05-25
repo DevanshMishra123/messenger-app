@@ -23,6 +23,24 @@ const ContextProvider = ({ children }) => {
   const socketRef = useRef();
 
   useEffect(() => {
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
+      .then((currentStream) => {
+        setStream(currentStream);
+        if (myVideo.current) {
+          myVideo.current.srcObject = currentStream;
+        }
+      })
+      .catch((err) => console.error("Error accessing media devices:", err));
+
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     socketRef.current = io("https://webrtc-backend-new.onrender.com");
 
     socketRef.current.on("me", (id) => setMe(id));
@@ -40,21 +58,6 @@ const ContextProvider = ({ children }) => {
       socketRef.current.disconnect();
     };
   }, []);
-
-  const startMedia = async () => {
-    try {
-      const currentStream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true,
-      });
-      setStream(currentStream);
-      if (myVideo.current) {
-        myVideo.current.srcObject = currentStream;
-      }
-    } catch (err) {
-      console.error("Error accessing media devices:", err);
-    }
-  };
 
   const answerCall = () => {
     setCallAccepted(true);
@@ -111,7 +114,7 @@ const ContextProvider = ({ children }) => {
 
   return (
     <SocketContext.Provider
-      value={{ call, callAccepted, myVideo, userVideo, stream, setStream, name, setName, callEnded, me, callUser, leaveCall, answerCall, idToCall, setIdToCall, startMedia }}
+      value={{ call, callAccepted, myVideo, userVideo, stream, setStream, name, setName, callEnded, me, callUser, leaveCall, answerCall, idToCall, setIdToCall }}
     >
       {children}
     </SocketContext.Provider>
@@ -154,4 +157,20 @@ useEffect(() => {
       }
     };
   }, []);
+*/
+/*
+const startMedia = async () => {
+    try {
+      const currentStream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      });
+      setStream(currentStream);
+      if (myVideo.current) {
+        myVideo.current.srcObject = currentStream;
+      }
+    } catch (err) {
+      console.error("Error accessing media devices:", err);
+    }
+  };
 */
