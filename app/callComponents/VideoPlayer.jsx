@@ -8,26 +8,6 @@ import { useState, useEffect } from "react";
 const VideoPlayer = () => {
   const { call, callAccepted, myVideo, userVideo, stream, setStream, name, callEnded } = useContext(SocketContext);
 
-  useEffect(() => {
-    if (!stream) {
-      navigator.mediaDevices
-        .getUserMedia({ video: true, audio: true })
-        .then((currentStream) => {
-          setStream(currentStream);
-          if (currentStream && myVideo.current) {
-            myVideo.current.srcObject = currentStream;
-          }
-        })
-        .catch((err) => console.error("Error accessing media devices.", err));
-    }
-  }, []);
-
-  useEffect(() => {
-    if (myVideo.current && stream) {
-      myVideo.current.srcObject = stream;
-    }
-  }, [stream]);
-
   return (
     <Grid
       container
@@ -198,4 +178,25 @@ const VideoPlayer = () => {
 };
 
 export default VideoPlayer;
+*/
+/*
+useEffect(() => {
+    if (!stream) {
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true })
+        .then((currentStream) => {
+          setStream(currentStream);
+          if (currentStream && myVideo.current) {
+            myVideo.current.srcObject = currentStream;
+          }
+        })
+        .catch((err) => console.error("Error accessing media devices.", err));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (myVideo.current && stream) {
+      myVideo.current.srcObject = stream;
+    }
+  }, [stream]);
 */

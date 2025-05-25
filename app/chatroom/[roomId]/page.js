@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 import { initiateSocket, getSocket } from "@/lib/socket";
 import { useParams } from "next/navigation";
 import { LogOut } from "lucide-react";
@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { SocketContext } from "@/app/socketContext";
 import Link from "next/link";
 
 const Chatroom = () => {
@@ -14,6 +15,7 @@ const Chatroom = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const userName = session?.user?.name;
+  const { startMedia} = useContext(SocketContext)
   const socketRef = useRef(null);
   const [room, setRoom] = useState(null);
   const [error, setError] = useState("");
@@ -145,7 +147,10 @@ const Chatroom = () => {
         </div>
         <div className="absolute w-full sm:w-auto text-center">
           <Button
-            onClick={() => router.push('/video-call')}
+            onClick={() => {
+              startMedia()
+              router.push('/video-call')
+            }}
             className="bg-black hover:bg-indigo-500 text-white p-2 rounded transition-colors duration-200 w-full sm:w-auto"
           >
             Video Call

@@ -8,7 +8,7 @@ import { createContext } from "react";
 
 const SocketContext = createContext();
 
-const ContextProvider = ({children}) => {
+const ContextProvider = ({ children }) => {
   const [stream, setStream] = useState(null);
   const [me, setMe] = useState("");
   const [call, setCall] = useState({}); // now holds call data or null
@@ -16,7 +16,6 @@ const ContextProvider = ({children}) => {
   const [callEnded, setCallEnded] = useState(false);
   const [name, setName] = useState("");
   const [idToCall, setIdToCall] = useState(""); // user can enter this manually for testing
-
 
   const myVideo = useRef();
   const userVideo = useRef();
@@ -41,6 +40,21 @@ const ContextProvider = ({children}) => {
       socketRef.current.disconnect();
     };
   }, []);
+
+  const startMedia = async () => {
+    try {
+      const currentStream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      });
+      setStream(currentStream);
+      if (myVideo.current) {
+        myVideo.current.srcObject = currentStream;
+      }
+    } catch (err) {
+      console.error("Error accessing media devices:", err);
+    }
+  };
 
   const answerCall = () => {
     setCallAccepted(true);
@@ -74,7 +88,7 @@ const ContextProvider = ({children}) => {
     });
 
     peer.on("stream", (currentStream) => {
-      console.log("current stream", currentStream)
+      console.log("current stream", currentStream);
       if (userVideo.current) {
         userVideo.current.srcObject = currentStream;
       }
@@ -93,17 +107,18 @@ const ContextProvider = ({children}) => {
     setCallAccepted(false);
     setCallEnded(true);
     connectionRef.current?.destroy();
-
   };
 
   return (
-    <SocketContext.Provider value = {{call, callAccepted, myVideo, userVideo, stream, setStream, name, setName, callEnded, me, callUser, leaveCall, answerCall, idToCall, setIdToCall}}>
+    <SocketContext.Provider
+      value={{ call, callAccepted, myVideo, userVideo, stream, setStream, name, setName, callEnded, me, callUser, leaveCall, answerCall, idToCall, setIdToCall, startMedia }}
+    >
       {children}
     </SocketContext.Provider>
   );
 };
 
-export { ContextProvider, SocketContext }
+export { ContextProvider, SocketContext };
 /*
 navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
@@ -120,4 +135,23 @@ useEffect(() => {
       myVideo.current.srcObject = stream;
     }
   }, [stream]);
+*/
+/*
+useEffect(() => {
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
+      .then((currentStream) => {
+        setStream(currentStream);
+        if (myVideo.current) {
+          myVideo.current.srcObject = currentStream;
+        }
+      })
+      .catch((err) => console.error("Error accessing media devices:", err));
+
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, []);
 */
