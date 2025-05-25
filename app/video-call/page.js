@@ -5,6 +5,47 @@ import io from "socket.io-client";
 import { set } from "mongoose";
 import Peer from "simple-peer";
 
+import {
+  Typography,
+  AppBar,
+  ThemeProvider,
+  createTheme,
+  CssBaseline,
+  Container,
+} from "@mui/material";
+
+import VideoPlayer from "../callComponents/VideoPlayer";
+import Options from "../callComponents/Options";
+import Notifications from "../callComponents/Notifications";
+
+// Create a theme instance
+const theme = createTheme();
+
+const VideoCall = () => {
+  return (
+    <Container maxWidth="lg">
+      <AppBar position="static" color="inherit">
+        <Typography variant="h2" align="center">
+          Video Chat
+        </Typography>
+      </AppBar>
+      <VideoPlayer />
+      <Options>
+        <Notifications />
+      </Options>
+    </Container>
+  );
+};
+
+export default VideoCall;
+/*
+const theme = createTheme({
+  palette: {
+    mode: "light",
+  },
+});
+*/
+
 /*
 const VideoCall = () => {
   const { roomId } = useParams();
@@ -203,6 +244,8 @@ const VideoCall = () => {
 
 export default VideoCall;
 */
+
+/*
 const VideoCall = () => {
   const [stream, setStream] = useState(null);
   const [me, setMe] = useState("");
@@ -210,6 +253,8 @@ const VideoCall = () => {
   const [callAccepted, setCallAccepted] = useState(false);
   const [callEnded, setCallEnded] = useState(false);
   const [name, setName] = useState("");
+  const [idToCall, setIdToCall] = useState(""); // user can enter this manually for testing
+
 
   const myVideo = useRef();
   const userVideo = useRef();
@@ -348,6 +393,7 @@ const VideoCall = () => {
 };
 
 export default VideoCall;
+*/
 
 /*
 console.log("[PEER] ontrack (answerer) fired:", event.streams);

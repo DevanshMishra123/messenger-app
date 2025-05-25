@@ -1,6 +1,8 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Provider from "./provider";
+import { ContextProvider } from "./socketContext";
+import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -10,6 +12,12 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const theme = createTheme({
+  palette: {
+    mode: "light",
+  },
 });
 
 export const metadata = {
@@ -22,8 +30,12 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <Provider>{children}</Provider>       
+      >     
+          <Provider>
+            <ContextProvider>
+              {children}
+            </ContextProvider>
+          </Provider>
       </body>
     </html>
   );
