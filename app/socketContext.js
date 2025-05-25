@@ -60,6 +60,11 @@ const ContextProvider = ({ children }) => {
   }, []);
 
   const answerCall = () => {
+    if (!stream) {
+      console.warn("Stream not ready yet. Cannot answer call.");
+      return;
+    }
+
     setCallAccepted(true);
 
     const peer = new Peer({ initiator: false, trickle: false, stream });
@@ -74,11 +79,19 @@ const ContextProvider = ({ children }) => {
       }
     });
 
+    peer.on("connect", () => {
+      console.log("Peer connection established.");
+    });
+
     peer.signal(call.signal);
     connectionRef.current = peer;
   };
 
   const callUser = (calleeId) => {
+    if (!stream) {
+      console.warn("Stream not ready yet. Please wait for media permission.");
+      return;
+    }
     const peer = new Peer({ initiator: true, trickle: false, stream });
 
     peer.on("signal", (data) => {
@@ -95,6 +108,10 @@ const ContextProvider = ({ children }) => {
       if (userVideo.current) {
         userVideo.current.srcObject = currentStream;
       }
+    });
+
+    peer.on("connect", () => {
+      console.log("Peer connection established.");
     });
 
     socketRef.current.once("callAccepted", (signal) => {
