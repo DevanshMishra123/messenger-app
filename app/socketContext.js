@@ -122,7 +122,8 @@ const ContextProvider = ({ children }) => {
       console.log("Peer connection established.");
     });
 
-    socketRef.current.once("callAccepted", (signal) => {
+    socketRef.current.off("callAccepted");
+    socketRef.current.on("callAccepted", (signal) => {
       setCallAccepted(true);
       peer.signal(signal);
     });
@@ -134,7 +135,10 @@ const ContextProvider = ({ children }) => {
     setCall({});
     setCallAccepted(false);
     setCallEnded(true);
-    connectionRef.current?.destroy();
+    if (connectionRef.current) {
+      connectionRef.current.destroy();
+      connectionRef.current = null;
+    }
   };
 
   return (
