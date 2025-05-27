@@ -140,13 +140,6 @@ const ContextProvider = ({ children }) => {
       connectionRef.current = null;
     }
 
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((currentStream) => {
-      setStream(currentStream);
-      if (myVideo.current) {
-        myVideo.current.srcObject = currentStream;
-      }
-    });
-
   };
 
   return (

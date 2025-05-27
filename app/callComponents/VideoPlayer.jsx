@@ -13,8 +13,7 @@ const VideoPlayer = () => {
       myVideo.current.srcObject = stream;
     }
   }, [stream]);
-
-
+  
   return (
     <Grid
       container
