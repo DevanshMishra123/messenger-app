@@ -122,6 +122,7 @@ const ContextProvider = ({ children }) => {
       console.log("Peer connection established.");
     });
 
+    socket.off("callAccepted");
     socketRef.current.once("callAccepted", (signal) => {
       setCallAccepted(true);
       peer.signal(signal);
@@ -138,6 +139,14 @@ const ContextProvider = ({ children }) => {
       connectionRef.current.destroy();
       connectionRef.current = null;
     }
+
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((currentStream) => {
+      setStream(currentStream);
+      if (myVideo.current) {
+        myVideo.current.srcObject = currentStream;
+      }
+    });
+
   };
 
   return (
